@@ -1,19 +1,7 @@
 @import "tailwindcss";
 
-:root {
-  --snapp-green: #00b862;
-  --snapp-green-dark: #009e54;
-  --snapp-dark: #1a1a2e;
-  --snapp-gray: #f4f5f7;
-}
-
-@theme inline {
-  --font-sans: "Vazirmatn", "SF Pro", system-ui, sans-serif;
-}
-
 body {
-  background: #f4f5f7;
-  color: #1a1a2e;
-  font-family: "Vazirmatn", "SF Pro", system-ui, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
   margin: 0;
 }
