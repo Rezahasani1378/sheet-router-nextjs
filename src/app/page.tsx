@@ -1,65 +1,231 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo } from "react";
+import {
+  SheetRouter,
+  SheetRoute,
+  useSheetNavigate,
+  useSheetParams,
+} from "@rezahasani78/sheet-router";
+import "@rezahasani78/sheet-router/styles.css";
+import { createReduxStorageProvider } from "@/store/sheet-storage-provider";
 
 export default function Home() {
+  const storageProvider = useMemo(() => createReduxStorageProvider(), []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <SheetRouter storageProvider={storageProvider}>
+      <WelcomePage />
+      <SheetRoute path="settings" component={Settings} title="Settings" />
+      <SheetRoute path="profile" component={Profile} title="Profile" />
+      <SheetRoute path="notifications" component={Notifications} title="Notifications" />
+      <SheetRoute path="confirm" component={Confirm} title="Confirm Action" />
+    </SheetRouter>
+  );
+}
+
+function WelcomePage() {
+  const { open } = useSheetNavigate();
+
+  return (
+    <main className="flex flex-col items-center justify-center min-h-dvh p-6 gap-8 text-center bg-slate-50">
+      <div className="flex flex-col items-center gap-4">
+        <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium tracking-wide">
+          @rezahasani78/sheet-router + Next.js
+        </span>
+        <h1 className="text-4xl font-bold text-slate-900 tracking-tight">
+          Sheet Router Demo
+        </h1>
+        <p className="text-slate-500 max-w-sm leading-relaxed">
+          Stacked bottom sheets with full back-button support.
+          Open sheets, navigate deep, press back to unwind.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap justify-center gap-3">
+        <button
+          onClick={() => open("settings")}
+          className="px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-colors cursor-pointer"
+        >
+          Settings
+        </button>
+        <button
+          onClick={() => open("profile", { userId: "42", name: "Reza" })}
+          className="px-6 py-3 rounded-xl border-2 border-slate-900 text-slate-900 font-semibold text-sm hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          Profile (with params)
+        </button>
+        <button
+          onClick={() => open("notifications")}
+          className="px-6 py-3 rounded-xl border-2 border-slate-300 text-slate-600 font-semibold text-sm hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          Notifications
+        </button>
+      </div>
+    </main>
+  );
+}
+
+function Settings() {
+  const { open, back, backAll } = useSheetNavigate();
+
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold text-slate-900">Settings</h2>
+      <p className="text-slate-500 leading-relaxed">
+        Manage your preferences. You can stack more sheets on top of this one.
+      </p>
+
+      <div className="space-y-3">
+        <div className="p-4 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span className="text-sm font-medium text-slate-700">Dark mode</span>
+          <div className="w-10 h-6 bg-slate-300 rounded-full relative">
+            <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 shadow" />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="p-4 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span className="text-sm font-medium text-slate-700">Push notifications</span>
+          <div className="w-10 h-6 bg-blue-500 rounded-full relative">
+            <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5 shadow" />
+          </div>
         </div>
-      </main>
+      </div>
+
+      <div className="flex flex-wrap gap-2 pt-2">
+        <button
+          onClick={() => open("profile", { userId: "7", name: "Reza" })}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold cursor-pointer"
+        >
+          Open Profile
+        </button>
+        <button
+          onClick={() => open("notifications")}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold cursor-pointer"
+        >
+          Notifications
+        </button>
+        <button
+          onClick={back}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-900 text-sm font-semibold cursor-pointer"
+        >
+          Close
+        </button>
+        <button
+          onClick={backAll}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-red-500 text-white text-sm font-semibold cursor-pointer"
+        >
+          Close All
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Profile() {
+  const { open, back } = useSheetNavigate();
+  const { params } = useSheetParams<{ userId: string; name: string }>();
+
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold text-slate-900">Profile</h2>
+
+      <div className="p-5 rounded-2xl bg-slate-50 space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
+            {params.name?.charAt(0) ?? "?"}
+          </div>
+          <div>
+            <p className="font-semibold text-slate-900 text-lg">{params.name}</p>
+            <p className="text-slate-400 text-sm">User ID: {params.userId}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => open("confirm", { action: "delete-account" })}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold cursor-pointer"
+        >
+          Open Confirm
+        </button>
+        <button
+          onClick={back}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-900 text-sm font-semibold cursor-pointer"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Notifications() {
+  const { open, back } = useSheetNavigate();
+
+  const items = [
+    { id: 1, text: "Your order has shipped", time: "2m ago" },
+    { id: 2, text: "New follower: Reza", time: "15m ago" },
+    { id: 3, text: "Payment received", time: "1h ago" },
+    { id: 4, text: "Weekly report ready", time: "3h ago" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold text-slate-900">Notifications</h2>
+
+      <div className="space-y-2">
+        {items.map((item) => (
+          <div key={item.id} className="p-4 rounded-xl bg-slate-50 flex items-center justify-between">
+            <span className="text-sm text-slate-700">{item.text}</span>
+            <span className="text-xs text-slate-400 shrink-0 ml-3">{item.time}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => open("profile", { userId: "99", name: "Guest" })}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold cursor-pointer"
+        >
+          Open Profile
+        </button>
+        <button
+          onClick={back}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-900 text-sm font-semibold cursor-pointer"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Confirm() {
+  const { back, backAll } = useSheetNavigate();
+  const { params } = useSheetParams<{ action: string }>();
+
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold text-slate-900">Confirm</h2>
+      <p className="text-slate-500 leading-relaxed">
+        Are you sure you want to <strong className="text-slate-900">{params.action}</strong>?
+        This is the deepest sheet in the current stack.
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={backAll}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl bg-red-500 text-white text-sm font-semibold cursor-pointer"
+        >
+          Confirm & Close All
+        </button>
+        <button
+          onClick={back}
+          className="flex-1 min-w-[120px] px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-900 text-sm font-semibold cursor-pointer"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
